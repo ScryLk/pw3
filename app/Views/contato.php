@@ -19,7 +19,9 @@
     <h3>Arquivos enviados:</h3>
         <ul>
             <?php foreach (session()->getFlashdata('arquivos') ?? [] as $arquivo): ?>
-                <li><?= esc($arquivo) ?></li>
+                <li><a href="<?= base_url('uploads/' . esc($arquivo)) ?>" target="_blank"> 
+                        <?= esc($arquivo) ?>
+                    </a></li>
             <?php endforeach; ?>
         </ul>
     </div>

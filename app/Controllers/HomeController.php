@@ -56,12 +56,16 @@ class HomeController extends BaseController
         $message = $request->getPost('message');
 
         $arquivos = $this->request->getFileMultiple('arquivos');
-        $caminhoUpload = FCPATH . 'uploads/';
+        if (!$arquivos) {
+            return redirect()->back()->with('errors', ['Nenhum arquivo foi enviado.']);
+        }
+
+        $nomesArquivos = [];
 
         foreach ($arquivos as $arquivo) {
             if ($arquivo->isValid() && !$arquivo->hasMoved()) {
                 $novoNome = time() . '_' . $arquivo->getRandomName();
-                $arquivo->move(WRITEPATH . 'uploads', $novoNome);
+                $arquivo->move(FCPATH . 'uploads/', $novoNome);
                 $nomesArquivos[] = $novoNome;
             }
         }
