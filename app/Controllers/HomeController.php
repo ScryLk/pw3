@@ -41,7 +41,8 @@ class HomeController extends BaseController
                 ]
             ],
             'message' => 'required|min_length[10]',
-            'arquivos' => 'uploaded[arquivos]|max_size[arquivos,2048]|ext_in[arquivos,jpg,jpeg,png,pdf]'
+            'arquivos' => 'uploaded[arquivos]|max_size[arquivos,2048]|ext_in[arquivos,jpg,jpeg,png,pdf]',
+            'perfil' => 'uploaded[perfil]|max_size[perfil,2048]|ext_in[perfil,jpg,jpeg,png]'
         ];
 
         if (!$this->validate($rules)) {
@@ -49,15 +50,21 @@ class HomeController extends BaseController
         }
 
         $nomesArquivos = [];
-        
+
 
         $name = $request->getPost('name');
         $email = $request->getPost('email');
         $message = $request->getPost('message');
 
+
         $arquivos = $this->request->getFileMultiple('arquivos');
         if (!$arquivos) {
             return redirect()->back()->with('errors', ['Nenhum arquivo foi enviado.']);
+        }
+
+        $perfil = $this->request->getFile('perfil');
+        if (!$perfil) {
+            return redirect()->back()->with('errors', ['Nenhuma foto de perfil foi enviada.']);
         }
 
         $nomesArquivos = [];
@@ -69,11 +76,16 @@ class HomeController extends BaseController
                 $nomesArquivos[] = $novoNome;
             }
         }
-   
+        if ($perfil->isValid() && !$perfil->hasMoved()) {
+            $novoNomePerfil = time() . '_' . $perfil->getRandomName();
+            $perfil->move(FCPATH . 'uploads/', $novoNomePerfil);
+        
+        }
+
 
         // Exibir mensagem de sucesso (ou implementar o envio de e-mail por exemplo)
 
-        return redirect()->back()->with('success', 'Mensagem enviada com sucesso!')->with('arquivos', $nomesArquivos);
+        return redirect()->back()->with('success', 'Mensagem enviada com sucesso!')->with('arquivos', $nomesArquivos)->with('perfil', $novoNomePerfil);
 
     }
 
