@@ -28,6 +28,11 @@
                     <?= esc($perfil) ?> (Foto de Perfil)
                 </a></li>
         <?php endif; ?>
+        <?php if ($comprovante_residencia = session()->getFlashdata('comprovante_residencia')) : ?>
+            <li><a href="<?= base_url('uploads/' . esc($comprovante_residencia)) ?>" target="_blank">
+                    <?= esc($comprovante_residencia) ?> (Comprovante de Residência)
+                </a></li>
+        <?php endif; ?>
     </ul>
     </div>
 <?php endif ?>
@@ -52,12 +57,16 @@
         </div>
 
         <div class="mb-3">
-            <label for="arquivos">Arquivos:</label>
+            <label for="arquivos">Documento Oficial (PDF):</label>
             <input type="file" name="arquivos[]" multiple>
         </div>
         <div class="mb-3">
             <label for="perfil">Foto de Perfil:</label>
             <input type="file" name="perfil" multiple>
+        </div>
+        <div class="mb-3">
+            <label for="perfil">Comprovante de Residência (PNG ou JPG):</label>
+            <input type="file" name="comprovante_residencia" multiple>
         </div>
         <br>
         <button type="submit" class="btn btn-primary">Enviar</button>

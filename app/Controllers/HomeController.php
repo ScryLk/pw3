@@ -41,8 +41,9 @@ class HomeController extends BaseController
                 ]
             ],
             'message' => 'required|min_length[10]',
-            'arquivos' => 'uploaded[arquivos]|max_size[arquivos,2048]|ext_in[arquivos,jpg,jpeg,png,pdf]',
-            'perfil' => 'uploaded[perfil]|max_size[perfil,2048]|ext_in[perfil,jpg,jpeg,png]'
+            'arquivos' => 'uploaded[arquivos]|max_size[arquivos,2048]|ext_in[arquivos,pdf]',
+            'perfil' => 'uploaded[perfil]|max_size[perfil,2048]|ext_in[perfil,jpg,jpeg,png]',
+            'comprovante_residencia' => 'uploaded[comprovante_residencia]|max_size[comprovante_residencia,2048]|ext_in[comprovante_residencia,png,jpg]',
         ];
 
         if (!$this->validate($rules)) {
@@ -67,7 +68,14 @@ class HomeController extends BaseController
             return redirect()->back()->with('errors', ['Nenhuma foto de perfil foi enviada.']);
         }
 
+        $comprovante_residencia = $this->request->getFile('comprovante_residencia');
+        if (!$comprovante_residencia) {
+            return redirect()->back()->with('errors', ['Nenhum documento anexado']);
+        }
+
         $nomesArquivos = [];
+        $novoComprovanteResidencia = '';
+
 
         foreach ($arquivos as $arquivo) {
             if ($arquivo->isValid() && !$arquivo->hasMoved()) {
@@ -79,13 +87,18 @@ class HomeController extends BaseController
         if ($perfil->isValid() && !$perfil->hasMoved()) {
             $novoNomePerfil = time() . '_' . $perfil->getRandomName();
             $perfil->move(FCPATH . 'uploads/', $novoNomePerfil);
-        
+
+        }
+
+        if ($comprovante_residencia->isValid() && !$comprovante_residencia->hasMoved()) {
+            $novoComprovanteResidencia = time() . '_' . $comprovante_residencia->getRandomName();
+            $comprovante_residencia->move(FCPATH . 'uploads/', $novoComprovanteResidencia);
         }
 
 
         // Exibir mensagem de sucesso (ou implementar o envio de e-mail por exemplo)
 
-        return redirect()->back()->with('success', 'Mensagem enviada com sucesso!')->with('arquivos', $nomesArquivos)->with('perfil', $novoNomePerfil);
+        return redirect()->back()->with('success', 'Mensagem enviada com sucesso!')->with('arquivos', $nomesArquivos)->with('perfil', $novoNomePerfil)->with('comprovante_residencia', $novoComprovanteResidencia);;
 
     }
 
