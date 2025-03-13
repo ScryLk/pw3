@@ -15,6 +15,14 @@
     <div class="alert alert-success">
         <?= session()->getFlashdata('success') ?>
     </div>
+
+    <h3>Arquivos enviados:</h3>
+        <ul>
+            <?php foreach (session()->getFlashdata('arquivos') ?? [] as $arquivo): ?>
+                <li><?= esc($arquivo) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
 <?php endif ?>
 
 
@@ -28,16 +36,16 @@
         </div>
         <div class="mb-3">
             <label for="email" class="form-label">E-mail</label>
-            <input type="text" class="form-control" id="email" name="email" value="<?= old('email') ?>" required>
+            <input type="email" class="form-control" id="email" name="email" value="<?= old('email') ?>" required>
         </div>
         <div class="mb-3">
             <label for="message" class="form-label">Mensagem</label>
             <textarea class="form-control" id="message" name="message" rows="5"   required><?= old('message') ?></textarea>
         </div>
 
-        <div class="mb-3">
-            <label for="arquivo">Arquivo:</label>
-        <input type="file" name="arquivo" >
+			  <div class="mb-3">
+            <label for="arquivos">Arquivos:</label>
+            <input type="file" name="arquivos[]" multiple>
         </div>
         <br>
         <button type="submit" class="btn btn-primary">Enviar</button>

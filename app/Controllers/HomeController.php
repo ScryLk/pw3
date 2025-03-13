@@ -41,29 +41,36 @@ class HomeController extends BaseController
                 ]
             ],
             'message' => 'required|min_length[10]',
-            'arquivo' => 'uploaded[arquivo]|max_size[arquivo,2048]|ext_in[arquivo,jpg,jpeg,png,pdf]'
+            'arquivos' => 'uploaded[arquivos]|max_size[arquivos,2048]|ext_in[arquivos,jpg,jpeg,png,pdf]'
         ];
 
         if (!$this->validate($rules)) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
+
+        $nomesArquivos = [];
         
 
         $name = $request->getPost('name');
         $email = $request->getPost('email');
         $message = $request->getPost('message');
 
-        $arquivo = $this->request->getFile('arquivo');
+        $arquivos = $this->request->getFileMultiple('arquivos');
+        $caminhoUpload = FCPATH . 'uploads/';
 
-        if ($arquivo->isValid() && !$arquivo->hasMoved()) {
-               $novoNome = $arquivo->getRandomName();
-               $arquivo->move(WRITEPATH . 'uploads', $novoNome);
+        foreach ($arquivos as $arquivo) {
+            if ($arquivo->isValid() && !$arquivo->hasMoved()) {
+                $novoNome = time() . '_' . $arquivo->getRandomName();
+                $arquivo->move(WRITEPATH . 'uploads', $novoNome);
+                $nomesArquivos[] = $novoNome;
+            }
         }
    
 
         // Exibir mensagem de sucesso (ou implementar o envio de e-mail por exemplo)
 
-        return redirect()->back()->with('success', 'Mensagem enviada com sucesso!');
+        return redirect()->back()->with('success', 'Mensagem enviada com sucesso!')->with('arquivos', $nomesArquivos);
+
     }
 
 }
